@@ -1,0 +1,3 @@
+rootProject.name = "Bility"
+include ':app'
+include ':bilitylib'
