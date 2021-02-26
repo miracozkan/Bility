@@ -16,7 +16,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class BillingConfig(
     val base64PublicKey: String,
-    val inAppSkuList: List<String>,
-    val subsSkuList: List<String>,
-    val consumableSkuList: List<String>
+    val inAppSkuList: List<String> = emptyList(),
+    val subsSkuList: List<String> = emptyList(),
+    val consumableSkuList: List<String> = emptyList()
 ) : Parcelable

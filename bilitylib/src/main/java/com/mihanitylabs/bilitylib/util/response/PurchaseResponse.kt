@@ -1,4 +1,4 @@
-package com.mihanitylabs.bilitylib.util
+package com.mihanitylabs.bilitylib.util.response
 
 import com.android.billingclient.api.Purchase
 
@@ -19,4 +19,5 @@ sealed class PurchaseResponse {
     object FeatureNotSupported : PurchaseResponse()
     object UserCancelled : PurchaseResponse()
     object BillingNotAvailable : PurchaseResponse()
+    object ItemAlreadyOwned : PurchaseResponse()
 }

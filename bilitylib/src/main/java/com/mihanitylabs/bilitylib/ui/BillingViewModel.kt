@@ -6,9 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.android.billingclient.api.SkuDetails
 import com.mihanitylabs.bilitylib.data.repository.BillingRepository
-import com.mihanitylabs.bilitylib.util.BillingClientResponse
+import com.mihanitylabs.bilitylib.util.response.BillingClientResponse
 import com.mihanitylabs.bilitylib.util.Event
-import com.mihanitylabs.bilitylib.util.PurchaseResponse
+import com.mihanitylabs.bilitylib.util.response.PurchaseResponse
 import com.mihanitylabs.bilitylib.util.Resource
 
 

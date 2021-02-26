@@ -10,13 +10,18 @@ import com.mihanitylabs.bilitylib.R
 import com.mihanitylabs.bilitylib.data.model.BillingConfig
 import com.mihanitylabs.bilitylib.databinding.FragmentBillingBinding
 import com.mihanitylabs.bilitylib.util.*
+import com.mihanitylabs.bilitylib.util.response.BillingClientResponse
+import com.mihanitylabs.bilitylib.util.response.PurchaseResponse
 
 class BillingFragment : Fragment(R.layout.fragment_billing) {
 
     private val binding by viewBinding(FragmentBillingBinding::bind)
 
     private val billingRepository by lazy {
-        DependencyUtil.provideBillingRepository(requireContext(), billingConfig ?: throw Exception("Billing Config is null"))
+        DependencyUtil.provideBillingRepository(
+            requireContext(),
+            billingConfig ?: throw Exception("Billing Config is null")
+        )
     }
     private val billingViewModel by lazy {
         ViewModelProvider(
@@ -88,6 +93,7 @@ class BillingFragment : Fragment(R.layout.fragment_billing) {
                 PurchaseResponse.UserCancelled -> logError("PurchaseResponse.UserCancelled")
                 is PurchaseResponse.Error -> logError(purchaseResponse.exception?.message.toString())
                 PurchaseResponse.BillingNotAvailable -> logError("PurchaseResponse.BillingNotAvailable")
+                PurchaseResponse.ItemAlreadyOwned -> logError("ItemAlreadyOwned")
             }
         }
     }
@@ -108,7 +114,7 @@ class BillingFragment : Fragment(R.layout.fragment_billing) {
         billingViewModel.makePurchase(requireActivity(), sku)
     }
 
-    private fun navBack(){
+    private fun navBack() {
         parentFragmentManager.popBackStack()
     }
 

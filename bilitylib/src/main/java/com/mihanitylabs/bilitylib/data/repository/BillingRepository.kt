@@ -4,10 +4,13 @@ import android.app.Activity
 import android.content.Context
 import com.android.billingclient.api.*
 import com.mihanitylabs.bilitylib.data.model.BillingConfig
-import com.mihanitylabs.bilitylib.util.*
+import com.mihanitylabs.bilitylib.util.Resource
 import com.mihanitylabs.bilitylib.util.Security.verifyPurchase
+import com.mihanitylabs.bilitylib.util.logDebug
+import com.mihanitylabs.bilitylib.util.logError
+import com.mihanitylabs.bilitylib.util.response.BillingClientResponse
+import com.mihanitylabs.bilitylib.util.response.PurchaseResponse
 import java.util.*
-
 
 // Code with ❤️
 //┌─────────────────────────────┐
@@ -17,7 +20,6 @@ import java.util.*
 //│ ─────────────────────────── │
 //│ 1/27/2021 - 5:30 PM         │
 //└─────────────────────────────┘
-
 
 class BillingRepository(
     private val context: Context,
@@ -34,6 +36,7 @@ class BillingRepository(
     private var purchaseListener: ((PurchaseResponse) -> Unit)? = null
     private var billingClientListener: ((BillingClientResponse) -> Unit)? = null
 
+    //region Listeners
     fun setSkuDetailListener(skuDetailListener: (Resource<List<SkuDetails>>) -> Unit) {
         this.skuDetailListener = skuDetailListener
     }
@@ -49,6 +52,7 @@ class BillingRepository(
     fun setBillingClientListener(billingClientListener: (BillingClientResponse) -> Unit) {
         this.billingClientListener = billingClientListener
     }
+    //endregion
 
     override fun onPurchasesUpdated(
         billingResult: BillingResult,
@@ -67,6 +71,9 @@ class BillingRepository(
             }
             BillingClient.BillingResponseCode.BILLING_UNAVAILABLE -> {
                 purchaseListener?.invoke(PurchaseResponse.BillingNotAvailable)
+            }
+            BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED -> {
+                purchaseListener?.invoke(PurchaseResponse.ItemAlreadyOwned)
             }
             else -> purchaseListener?.invoke(PurchaseResponse.Error(Exception(billingResult.debugMessage)))
         }
@@ -257,8 +264,13 @@ class BillingRepository(
         }
     }
 
-    private fun isSignatureValid(purchase: Purchase) =
-        verifyPurchase(purchase.originalJson, purchase.signature, billingConfig.base64PublicKey)
+    private fun isSignatureValid(purchase: Purchase): Boolean {
+        return verifyPurchase(
+            purchase.originalJson,
+            purchase.signature,
+            billingConfig.base64PublicKey
+        )
+    }
 
     fun endDataSourceConnections() {
         billingClientListener?.invoke(BillingClientResponse.ServerDisconnected)

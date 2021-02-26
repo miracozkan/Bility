@@ -1,4 +1,4 @@
-package com.mihanitylabs.bilitylib.util
+package com.mihanitylabs.bilitylib.util.response
 
 
 // Code with ❤️
