@@ -4,12 +4,13 @@ import android.app.Activity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.android.billingclient.api.PurchaseHistoryRecord
 import com.android.billingclient.api.SkuDetails
 import com.mihanitylabs.bilitylib.data.repository.BillingRepository
-import com.mihanitylabs.bilitylib.util.response.BillingClientResponse
 import com.mihanitylabs.bilitylib.util.Event
-import com.mihanitylabs.bilitylib.util.response.PurchaseResponse
 import com.mihanitylabs.bilitylib.util.Resource
+import com.mihanitylabs.bilitylib.util.response.BillingClientResponse
+import com.mihanitylabs.bilitylib.util.response.PurchaseResponse
 
 
 // Code with ❤️
@@ -36,6 +37,12 @@ class BillingViewModel(private val billingRepository: BillingRepository) : ViewM
     private val _purchaseListener by lazy { MutableLiveData<PurchaseResponse>() }
     val purchaseListener: LiveData<PurchaseResponse> get() = _purchaseListener
 
+    private val _inAppHistory by lazy { MutableLiveData<List<PurchaseHistoryRecord>>() }
+    val inAppHistory: LiveData<List<PurchaseHistoryRecord>> = _inAppHistory
+
+    private val _subHistory by lazy { MutableLiveData<List<PurchaseHistoryRecord>>() }
+    val subHistory: LiveData<List<PurchaseHistoryRecord>> = _subHistory
+
     init {
         billingRepository.startDataSourceConnections()
         setBillingClientListener()
@@ -50,7 +57,7 @@ class BillingViewModel(private val billingRepository: BillingRepository) : ViewM
             .also { billingRepository.getSkuDetail() }
     }
 
-    fun setSubListener(){
+    fun setSubListener() {
         billingRepository.setSubDetailListener { _subDetailListener.postValue(it) }
             .also { billingRepository.getSubscriptionDetail() }
     }
@@ -62,6 +69,17 @@ class BillingViewModel(private val billingRepository: BillingRepository) : ViewM
 
     fun makePurchase(activity: Activity, sku: SkuDetails) {
         billingRepository.startBillingFlow(activity, sku)
+    }
+
+    fun setPurchaseHistoryListener() {
+        billingRepository.getPurchaseHistory(
+            inAppListener = {
+
+            },
+            subListener = {
+
+            }
+        )
     }
 
     override fun onCleared() {

@@ -5,6 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.android.billingclient.api.PurchaseHistoryRecord
 import com.android.billingclient.api.SkuDetails
 import com.mihanitylabs.bilitylib.R
 import com.mihanitylabs.bilitylib.data.model.BillingConfig
@@ -32,6 +33,7 @@ class BillingFragment : Fragment(R.layout.fragment_billing) {
 
     private val billingConfig: BillingConfig? by lazy { arguments?.getParcelable(BILLING_CONFIG) }
 
+    //region Observers
     private val billingClientObserver = EventObserver<BillingClientResponse> { clientResponse ->
         when (clientResponse) {
             BillingClientResponse.Connected -> {
@@ -97,6 +99,13 @@ class BillingFragment : Fragment(R.layout.fragment_billing) {
             }
         }
     }
+    private val inAppHistoryObserver by lazy {
+        Observer<List<PurchaseHistoryRecord>> {}
+    }
+    private val subHistoryObserver by lazy {
+        Observer<List<PurchaseHistoryRecord>> {}
+    }
+    //endregion
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -106,8 +115,10 @@ class BillingFragment : Fragment(R.layout.fragment_billing) {
     private fun initObservers() {
         billingViewModel.billingClientResult.observe(viewLifecycleOwner, billingClientObserver)
         billingViewModel.skuDetailListener.observe(viewLifecycleOwner, skuListObserver)
-        billingViewModel.purchaseListener.observe(viewLifecycleOwner, purchaseObserver)
         billingViewModel.subDetailListener.observe(viewLifecycleOwner, subListObserver)
+        billingViewModel.purchaseListener.observe(viewLifecycleOwner, purchaseObserver)
+        billingViewModel.inAppHistory.observe(viewLifecycleOwner, inAppHistoryObserver)
+        billingViewModel.subHistory.observe(viewLifecycleOwner, subHistoryObserver)
     }
 
     private fun onMakePurchase(sku: SkuDetails) {
