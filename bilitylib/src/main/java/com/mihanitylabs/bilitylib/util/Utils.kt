@@ -19,8 +19,8 @@ import androidx.viewbinding.ViewBinding
 fun <T : ViewBinding> Fragment.viewBinding(viewBindingFactory: (View) -> T) =
     FragmentViewBindingDelegate(this, viewBindingFactory)
 
-fun Any.logError(message: String = "Empty") {
-    Log.e(this::class.simpleName, message)
+fun Any.logError(message: String?) {
+    Log.e(this::class.simpleName, message ?: "Empty")
 }
 
 fun Any.logDebug(message: String = "Empty") {

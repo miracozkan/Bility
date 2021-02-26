@@ -25,6 +25,7 @@ import com.mihanitylabs.bilitylib.util.response.PurchaseResponse
 
 class BillingViewModel(private val billingRepository: BillingRepository) : ViewModel() {
 
+    //region LiveData Declarations
     private val _billingClientResult by lazy { MutableLiveData<Event<BillingClientResponse>>() }
     val billingClientResult: LiveData<Event<BillingClientResponse>> get() = _billingClientResult
 
@@ -42,6 +43,7 @@ class BillingViewModel(private val billingRepository: BillingRepository) : ViewM
 
     private val _subHistory by lazy { MutableLiveData<List<PurchaseHistoryRecord>>() }
     val subHistory: LiveData<List<PurchaseHistoryRecord>> = _subHistory
+    //endregion
 
     init {
         billingRepository.startDataSourceConnections()
@@ -73,12 +75,8 @@ class BillingViewModel(private val billingRepository: BillingRepository) : ViewM
 
     fun setPurchaseHistoryListener() {
         billingRepository.getPurchaseHistory(
-            inAppListener = {
-
-            },
-            subListener = {
-
-            }
+            inAppListener = {},
+            subListener = {}
         )
     }
 

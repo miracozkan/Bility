@@ -38,26 +38,16 @@ class BillingFragment : Fragment(R.layout.fragment_billing) {
         when (clientResponse) {
             BillingClientResponse.Connected -> {
                 billingViewModel.setPurchaseListener()
-                billingViewModel.setSkuListener() // if in app purchase is enabled
-                billingViewModel.setSubListener() // if subscription is enabled
-                logDebug("BillingClientResponse.Connected")
+                if (!billingConfig?.inAppSkuList.isNullOrEmpty()) billingViewModel.setSkuListener()
+                if (!billingConfig?.subsSkuList.isNullOrEmpty()) billingViewModel.setSubListener()
+                logDebug("Connected")
             }
             BillingClientResponse.Loading -> logDebug("BillingClientResponse.Loading")
-            BillingClientResponse.ServerDisconnected -> {
-                logError("BillingClientResponse.ServerDisconnected")
-            }
-            BillingClientResponse.ServiceTimeOut -> {
-                logError("BillingClientResponse.ServiceTimeOut")
-            }
-            BillingClientResponse.ServiceUnavailable -> {
-                logError("BillingClientResponse.ServiceUnavailable")
-            }
-            is BillingClientResponse.Error -> {
-                logError(clientResponse.exception?.localizedMessage.toString())
-            }
-            BillingClientResponse.ServiceNotReady -> {
-                logError("BillingClientResponse.ServiceNotReady")
-            }
+            BillingClientResponse.ServerDisconnected -> logError("ServerDisconnected")
+            BillingClientResponse.ServiceTimeOut -> logError("ServiceTimeOut")
+            BillingClientResponse.ServiceUnavailable -> logError("ServiceUnavailable")
+            is BillingClientResponse.Error -> logError(clientResponse.exception?.localizedMessage)
+            BillingClientResponse.ServiceNotReady -> logError("ServiceNotReady")
         }
     }
     private val skuListObserver by lazy {
@@ -114,11 +104,17 @@ class BillingFragment : Fragment(R.layout.fragment_billing) {
 
     private fun initObservers() {
         billingViewModel.billingClientResult.observe(viewLifecycleOwner, billingClientObserver)
-        billingViewModel.skuDetailListener.observe(viewLifecycleOwner, skuListObserver)
-        billingViewModel.subDetailListener.observe(viewLifecycleOwner, subListObserver)
         billingViewModel.purchaseListener.observe(viewLifecycleOwner, purchaseObserver)
-        billingViewModel.inAppHistory.observe(viewLifecycleOwner, inAppHistoryObserver)
-        billingViewModel.subHistory.observe(viewLifecycleOwner, subHistoryObserver)
+        if (billingConfig?.inAppSkuList?.isNullOrEmpty() == false) {
+            billingViewModel.skuDetailListener.observe(viewLifecycleOwner, skuListObserver)
+        }
+        if (billingConfig?.subsSkuList?.isNullOrEmpty() == false) {
+            billingViewModel.subDetailListener.observe(viewLifecycleOwner, subListObserver)
+        }
+        if (billingConfig?.isPurchaseHistoryNeeded == true) {
+            billingViewModel.inAppHistory.observe(viewLifecycleOwner, inAppHistoryObserver)
+            billingViewModel.subHistory.observe(viewLifecycleOwner, subHistoryObserver)
+        }
     }
 
     private fun onMakePurchase(sku: SkuDetails) {
