@@ -48,7 +48,7 @@ class Bility private constructor(
             .also { billingRepository.getSubscriptionDetail() }
     }
 
-    private fun onMakePurchase(activity: Activity, sku: SkuDetails) {
+    fun onMakePurchase(activity: Activity, sku: SkuDetails) {
         billingRepository.startBillingFlow(activity, sku)
     }
 
